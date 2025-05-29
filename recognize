@@ -1,0 +1,43 @@
+import os
+import json
+from playsound import playsound
+from voice import say
+from wakeword import listen_for_wakeword
+import recognize_speech as recognize_speech_module # type: ignore
+from gideon_brain import respond_to_query
+
+def recognize_speech():
+    """
+    recognize_speech function that uses the recognize_speech_module to recognize speech
+    """
+    try:
+        return recognize_speech_module.organise_speech()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return None
+
+def load_memory():
+    try:
+        with open("memory.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_memory(memory):
+    with open("memory.json", "w") as f:
+        json.dump(memory, f, indent=2)
+
+def main():
+    try:
+        playsound(os.path.join(os.getcwd(), "startup_chime.mp3"))
+    except Exception as e:
+        print(f"Startup sound error: {e}")
+    memory = load_memory()
+    say("Gideon system online.")
+    while True:
+        if listen_for_wakeword():
+            say("What can I do for you?")
+            user_input = recognize_speech()
+
+                    
+        
